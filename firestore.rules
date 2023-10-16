@@ -1,0 +1,30 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == 'SEU_VALOR_SECRETO';
+    }
+    function isOwner() {
+      return request.auth.uid == resource.data.ownerId || request.auth.uid == resource.data.userId;
+    }
+    function idsMatch(userId) {
+      return request.auth.uid == userId;
+    }
+    function isSignedIn() {
+      return request.auth.uid != null;
+    }
+    match /{document=**} {
+      allow read, write: if true;
+    }
+    match /users/{userId} {
+      allow delete: if false;
+      allow create: if isSignedIn() && idsMatch(userId);
+      allow update: if
+        isSignedIn() && idsMatch(userId)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['email', 'id', 'admin']);
+      allow read:
+        if isSignedIn() && (idsMatch(userId) || isAdmin() || teamsMatch());
+    }
+  }
+}
