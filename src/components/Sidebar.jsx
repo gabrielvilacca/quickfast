@@ -1,14 +1,5 @@
 import { Button } from "@/shadcn/components/ui/button";
-import {
-  DashboardIcon,
-  HomeIcon,
-  InfoCircledIcon,
-  LinkBreak2Icon,
-  MagicWandIcon,
-  PersonIcon,
-  RocketIcon,
-  ExitIcon,
-} from "@radix-ui/react-icons";
+import { InfoCircledIcon, PersonIcon, ExitIcon } from "@radix-ui/react-icons";
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "@/hooks/useLogout";
 import Logo from "./Logo";
@@ -23,34 +14,7 @@ import getInitials from "@/utils/getInitials";
 import Loading from "./Loading";
 import { useState } from "react";
 import { ProfilePicDialog } from "./ProfilePicDialog";
-
-const options = [
-  {
-    route: "/opt1",
-    name: "Opção 1",
-    icon: <HomeIcon />,
-  },
-  {
-    route: "/opt2",
-    name: "Opção 2",
-    icon: <DashboardIcon />,
-  },
-  {
-    route: "/opt3",
-    name: "Opção 3",
-    icon: <MagicWandIcon />,
-  },
-  {
-    route: "/opt4",
-    name: "Opção 4",
-    icon: <LinkBreak2Icon />,
-  },
-  {
-    route: "/opt5",
-    name: "Opção 5",
-    icon: <RocketIcon />,
-  },
-];
+import { routeOptions } from "@/constants/constants.jsx";
 
 export default function Sidebar({ rerender, setRerender }) {
   const navigate = useNavigate();
@@ -61,8 +25,6 @@ export default function Sidebar({ rerender, setRerender }) {
   const handleLogout = () => {
     logout();
   };
-
-  console.log(user);
 
   return (
     <nav className="relative overflow-y-auto min-h-[calc(100vh_-_64px)] hidden sm:flex sm:flex-col sm:justify-between h-full w-[250px] bg-background border border-border">
@@ -104,7 +66,7 @@ export default function Sidebar({ rerender, setRerender }) {
           </div>
           <Separator className="my-2.5" />
           <div className="box-border">
-            {options.map((option, index) => (
+            {routeOptions.map((option, index) => (
               <div
                 key={option.route}
                 role="button"

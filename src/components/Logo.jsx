@@ -4,7 +4,7 @@ import { useTheme } from "@/providers/ThemeProvider";
 import { useNavigate } from "react-router-dom";
 
 export default function Logo({ size, justify }) {
-  const width = size === "sm" ? "w-48" : "w-56";
+  const width = size === "sm" ? "w-40" : "w-56";
   const { theme } = useTheme();
 
   const navigate = useNavigate();

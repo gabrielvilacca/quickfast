@@ -11,11 +11,11 @@ import Profile from "./pages/Profile/Profile";
 import { useState } from "react";
 import { Toaster } from "@/shadcn/components/ui/toaster";
 import { UserDocProvider } from "./contexts/UserDocContext";
-import { useDocument } from "./hooks/useDocument";
 import useMediaQuery from "./hooks/useMediaQuery";
 import Topbar from "./components/Topbar";
 import PasswordRecovery from "./pages/Recover/Recover";
 import Help from "./pages/Help/Help";
+import { SubscriptionProvider } from "./contexts/SubscriptionContext";
 
 function App() {
   const { user, authIsReady } = useAuthContext();
@@ -32,9 +32,9 @@ function App() {
         <BrowserRouter>
           {user ? (
             <UserDocProvider user={user}>
-              <>
+              <SubscriptionProvider user={user}>
                 {isMobile ? (
-                  <Topbar />
+                  <Topbar setRerender={setRerender} />
                 ) : (
                   <div className="w-[250px] h-screen fixed top-0 left-0 overflow-y-auto">
                     <Sidebar rerender={rerender} setRerender={setRerender} />
@@ -56,7 +56,7 @@ function App() {
                     <Route path="*" element={<Home />} />
                   </Routes>
                 </div>
-              </>
+              </SubscriptionProvider>
             </UserDocProvider>
           ) : (
             <Routes>

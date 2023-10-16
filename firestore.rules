@@ -1,9 +1,9 @@
 rules_version = '2';
-
+// TODO: Definir as próprias regras de banco de dados
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == 'SEU_VALOR_SECRETO';
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == 'SEU_VALOR_SECRETO'; // TODO: Altera
     }
     function isOwner() {
       return request.auth.uid == resource.data.ownerId || request.auth.uid == resource.data.userId;

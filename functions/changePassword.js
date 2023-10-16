@@ -18,7 +18,7 @@ const auth = admin.auth();
 // Configurações do CORS
 const corsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigins = ["http://localhost:5173", "https://example.com"];
+    const allowedOrigins = ["http://localhost:5173", "https://example.com"]; // TODO: Substituir pelo seu domínio
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
