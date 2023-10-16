@@ -2,10 +2,9 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const mailchimp = require("@mailchimp/mailchimp_marketing");
 
-// TODO: Definir a sua chave de API do Mailchimp como variável de configuração
 mailchimp.setConfig({
   apiKey: functions.config().mailchimp.api_key,
-  server: "us12", // Alterar pelo servidor da sua conta (últimos 4 caracteres da sua chave de API)
+  server: "us12",
 });
 
 if (admin.apps.length === 0) {
@@ -18,7 +17,6 @@ exports.onUserCreate = functions.firestore
     const userData = snap.data();
     const email = userData.email;
 
-    // Alterar pelo ID da sua audiência no Mailchimp
     const listId = "14ac8d6a41";
 
     const subscribingUser = {

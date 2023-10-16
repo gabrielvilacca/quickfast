@@ -5,12 +5,12 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // TODO: Colocar o firebaseConfig do seu app aqui abaixo
 const firebaseConfig = {
-  apiKey: "AIzaSyCXG6qvG-DjGETyzWKT1sJD8EIhTF0JgI4",
-  authDomain: "amazing-app-4bd76.firebaseapp.com",
-  projectId: "amazing-app-4bd76",
-  storageBucket: "amazing-app-4bd76.appspot.com",
-  messagingSenderId: "848381787394",
-  appId: "1:848381787394:web:de1323d670225f6205961b",
+  apiKey: "AIzaSyAGHixNK8LcQsQVlq0ahKE8lkKWI9KzN5M",
+  authDomain: "projeto-teste-405b3.firebaseapp.com",
+  projectId: "projeto-teste-405b3",
+  storageBucket: "projeto-teste-405b3.appspot.com",
+  messagingSenderId: "306468732119",
+  appId: "1:306468732119:web:148ed7ea0bfe3495828492",
 };
 
 // Initialize Firebase
