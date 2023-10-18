@@ -1,75 +1,69 @@
-import "./App.css";
-import Sidebar from "./components/Sidebar";
-import Home from "./pages/Home/Home";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login/Login";
-import Signup from "./pages/Signup/Signup";
-import { ThemeProvider } from "./providers/ThemeProvider";
-import { useAuthContext } from "./hooks/useAuthContext";
-import Loading from "./components/Loading";
-import Profile from "./pages/Profile/Profile";
-import { useState } from "react";
-import { Toaster } from "@/shadcn/components/ui/toaster";
-import { UserDocProvider } from "./contexts/UserDocContext";
-import useMediaQuery from "./hooks/useMediaQuery";
-import Topbar from "./components/Topbar";
-import PasswordRecovery from "./pages/Recover/Recover";
-import Help from "./pages/Help/Help";
-import { SubscriptionProvider } from "./contexts/SubscriptionContext";
+import { useEffect } from "react";
+import AppRoutes from "./AppRoutes";
 
 function App() {
-  const { user, authIsReady } = useAuthContext();
-  const [rerender, setRerender] = useState(false);
+  useEffect(() => {
+    const options = {
+      autoConfig: true,
+      debug: true,
+    };
 
-  const isMobile = useMediaQuery("(max-width: 640px)");
+    // Unique Event ID para deduplicação
+    const uniqueEventId = getUniqueId(); // Adicione sua função para gerar ID único aqui
 
-  if (!authIsReady) return <Loading />;
+    ReactPixel.init("PIXEL", {}, options); // TODO: Substituir "PIXEL" pelo ID do seu pixel
+    fbq("track", "PageView", {}, { eventID: uniqueEventId });
 
-  return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <div className="App flex flex-col sm:flex-row">
-        <Toaster />
-        <BrowserRouter>
-          {user ? (
-            <UserDocProvider user={user}>
-              <SubscriptionProvider user={user}>
-                {isMobile ? (
-                  <Topbar setRerender={setRerender} />
-                ) : (
-                  <div className="w-[250px] h-screen fixed top-0 left-0 overflow-y-auto">
-                    <Sidebar rerender={rerender} setRerender={setRerender} />
-                  </div>
-                )}
-                <div className="mt-12 sm:mt-0 flex-grow sm:ml-[250px]">
-                  <Routes>
-                    <Route exact path="/" element={<Home />} />
-                    <Route
-                      path="/account"
-                      element={
-                        <Profile
-                          rerender={rerender}
-                          setRerender={setRerender}
-                        />
-                      }
-                    />
-                    <Route path="/help" element={<Help />} />
-                    <Route path="*" element={<Home />} />
-                  </Routes>
-                </div>
-              </SubscriptionProvider>
-            </UserDocProvider>
-          ) : (
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/password/recovery" element={<PasswordRecovery />} />
-              <Route path="*" element={<Signup />} />
-            </Routes>
-          )}
-        </BrowserRouter>
-      </div>
-    </ThemeProvider>
-  );
+    // Seus próprios cookies para fbp e fbc
+    const fbp = getCookie("_fbp");
+    const fbc = getCookie("_fbc");
+
+    // Chamada API para enviar evento de PageView para seu próprio endpoint
+    fetch("URL_FACEBOOKCAPI", {
+      // TODO: Substituir "URL_FACEBOOKCAPI" pela URL do seu endpoint
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        event_name: "PageView",
+        fbp: fbp,
+        fbc: fbc,
+        event_id: uniqueEventId,
+        action_source: "website",
+        event_source_url: window.location.href.split("?")[0],
+        user_agent: navigator.userAgent,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Houve um erro no envio:", error));
+  }, []);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Parâmetros que você quer capturar
+    const parameters = [
+      "utm_source",
+      "utm_medium",
+      "utm_campaign",
+      "utm_term",
+      "utm_content",
+      "sck",
+      "ref",
+    ];
+
+    // Loop para salvar cada parâmetro em um cookie, se ele existir
+    parameters.forEach((param) => {
+      const value = urlParams.get(param);
+      if (value) {
+        setCookie(param, value, 60); // Salvando o valor em um cookie que expira em 60 dias
+      }
+    });
+  }, [window.location.search]);
+
+  return <AppRoutes />;
 }
 
 export default App;

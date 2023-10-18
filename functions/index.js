@@ -7,6 +7,8 @@ const { facebookCapi } = require("./facebookCapi");
 
 module.exports = {
   changePassword,
+  initiateCheckout,
+  facebookCapi,
   // onUserCreate,
   onHotmartWebhook,
   onBeforeCreate,
