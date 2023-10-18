@@ -1,5 +1,8 @@
 import { useEffect } from "react";
 import AppRoutes from "./AppRoutes";
+import { getUniqueId } from "@/utils/getUniqueId";
+import ReactPixel from "react-facebook-pixel";
+import { getCookie } from "@/utils/getCookie";
 
 function App() {
   useEffect(() => {
