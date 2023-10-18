@@ -8,10 +8,9 @@ const {
 } = require("./actions/sendEventToMailchimp");
 const { getUniqueId } = require("./utils/getUniqueId");
 
-// TODO: Definir a sua chave de API do Mailchimp como variável de configuração
 mailchimp.setConfig({
   apiKey: functions.config().mailchimp.api_key,
-  server: "us12", // Alterar pelo servidor da sua conta (últimos 4 caracteres da sua chave de API)
+  server: "us12",
 });
 
 if (admin.apps.length === 0) {

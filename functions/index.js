@@ -1,4 +1,3 @@
-const { onTeamCreate } = require("./onTeamCreate");
 // const { onUserCreate } = require("./onUserCreate");
 const { onHotmartWebhook } = require("./onHotmartWebhook");
 const { onBeforeCreate } = require("./onBeforeCreate");
@@ -8,7 +7,6 @@ const { facebookCapi } = require("./facebookCapi");
 
 module.exports = {
   changePassword,
-  onTeamCreate,
   // onUserCreate,
   onHotmartWebhook,
   onBeforeCreate,
