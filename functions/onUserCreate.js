@@ -8,11 +8,6 @@ const {
 } = require("./actions/sendEventToMailchimp");
 const { getUniqueId } = require("./utils/getUniqueId");
 
-mailchimp.setConfig({
-  apiKey: functions.config().mailchimp.api_key,
-  server: "us12",
-});
-
 if (admin.apps.length === 0) {
   admin.initializeApp();
 }
@@ -27,7 +22,7 @@ exports.onUserCreate = functions.firestore
     userData.event_source_url = `https://${userData.origin}`;
 
     const promises = [
-      createContactOnMailchimp(mailchimp, listId, userData),
+      createContactOnMailchimp(userData),
       sendEventToFacebook(userData),
     ];
 

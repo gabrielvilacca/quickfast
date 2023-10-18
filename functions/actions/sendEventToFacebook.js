@@ -6,7 +6,9 @@ const UserData = bizSdk.UserData;
 const ServerEvent = bizSdk.ServerEvent;
 const CustomData = bizSdk.CustomData;
 
-const pixelId = "PIXEL";
+const pixelId = "PIXEL"; // TODO: Alterar para o ID do seu pixel
+// TODO: Definir o seu token de acesso
+// functions:config:set facebook.token="seu_token"
 const accessToken = functions.config().facebook.token;
 
 function hashData(data, shouldConvertToLowercase = true) {
@@ -39,10 +41,6 @@ async function sendEventToFacebook(body, ip) {
       .setFbc(fbc)
       .setClientIpAddress(ip)
       .setClientUserAgent(user_agent);
-
-    if (event_name === "Initiate Checkout") {
-      customData = new CustomData().setValue(value).setCurrency(currency);
-    }
 
     if (email) {
       userData.setEmail(hashData(email));
