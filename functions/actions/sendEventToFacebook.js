@@ -9,17 +9,18 @@ const CustomData = bizSdk.CustomData;
 const pixelId = "PIXEL";
 const accessToken = functions.config().facebook.token;
 
-function hashData(data) {
-  return crypto
-    .createHash("sha256")
-    .update(data.toLowerCase().trim())
-    .digest("hex");
+function hashData(data, shouldConvertToLowercase = true) {
+  let inputData = shouldConvertToLowercase
+    ? data.toLowerCase().trim()
+    : data.trim();
+  return crypto.createHash("sha256").update(inputData).digest("hex");
 }
 
 async function sendEventToFacebook(body, ip) {
   try {
     const {
       name,
+      userId,
       phone,
       event_name,
       value,
@@ -45,6 +46,10 @@ async function sendEventToFacebook(body, ip) {
 
     if (email) {
       userData.setEmail(hashData(email));
+    }
+
+    if (userId) {
+      userData.setExternalId(hashData(userId, false));
     }
 
     if (phone) {

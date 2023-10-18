@@ -16,12 +16,33 @@ import Topbar from "./components/Topbar";
 import PasswordRecovery from "./pages/Recover/Recover";
 import Help from "./pages/Help/Help";
 import { SubscriptionProvider } from "./contexts/SubscriptionContext";
+import ReactPixel from "react-facebook-pixel";
+import { hashString } from "./utils/hashString";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
   const [rerender, setRerender] = useState(false);
 
   const isMobile = useMediaQuery("(max-width: 640px)");
+
+  useEffect(() => {
+    if (authIsReady && user && !sessionStorage.getItem("pixelInitialized")) {
+      // Dados para AdvancedMatching
+      const advancedMatching = {
+        em: hashString(user.email),
+        external_id: hashString(user.uid, false),
+      };
+      const options = {
+        autoConfig: true,
+        debug: false,
+      };
+      ReactPixel.init("SEU_PIXEL_ID", advancedMatching, options); // TODO: Substituir "SEU_PIXEL_ID" pelo ID do seu pixel
+      ReactPixel.pageView();
+
+      // Marcar como inicializado para esta sessão
+      sessionStorage.setItem("pixelInitialized", "true");
+    }
+  }, [authIsReady, user]);
 
   if (!authIsReady) return <Loading />;
 
