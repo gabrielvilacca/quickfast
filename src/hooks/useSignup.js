@@ -3,14 +3,16 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db, timestamp } from "../firebase/config";
 import { useAuthContext } from "./useAuthContext";
+import { useQuery } from "./useQuery";
 
 export const useSignup = () => {
+  const query = useQuery();
   const [isCancelled, setIsCancelled] = useState(false);
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
   const { dispatch } = useAuthContext();
 
-  const signup = async (email, password, name) => {
+  const signup = async (email, password, phone, name) => {
     setError(null);
     setIsPending(true);
 
@@ -35,6 +37,19 @@ export const useSignup = () => {
         createdAt,
         email: email,
         name: name,
+        phone: phone,
+        user_agent: navigator.userAgent,
+        origin: window.location.href.split("?")[0],
+        fbp: getCookie("_fbp"),
+        fbc: getCookie("_fbc"),
+        utm: {
+          source: query.get("utm_source") || getCookie("utm_source"),
+          medium: query.get("utm_medium") || getCookie("utm_medium"),
+          campaign: query.get("utm_campaign") || getCookie("utm_campaign"),
+          term: query.get("utm_term") || getCookie("utm_term"),
+          content: query.get("utm_content") || getCookie("utm_content"),
+        },
+        sck: query.get("sck") || getCookie("sck"),
       });
 
       // Dispatch login action

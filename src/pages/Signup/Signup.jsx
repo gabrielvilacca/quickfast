@@ -35,6 +35,7 @@ export default function Signup() {
       "gamil.com": "gmail.com",
       "gmial.com": "gmail.com",
       "gmail.co": "gmail.com",
+      "gmai.com": "gmail.com",
       "hotmal.com": "hotmail.com",
       "hotmai.com": "hotmail.com",
       "hotmial.com": "hotmail.com",
@@ -138,9 +139,7 @@ export default function Signup() {
               <ReloadIcon className="w-5 h-5 mr-2 animate-spin" />
             )}
             <GoogleLogo />
-            {googleIsPending
-              ? "Aguardando..."
-              : "Cadastre-se com sua conta Google"}
+            {googleIsPending ? "Aguardando..." : "Entrar com a conta Google"}
           </Button>
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">

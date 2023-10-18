@@ -4,12 +4,15 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db, googleProvider } from "../firebase/config";
 import { useAuthContext } from "./useAuthContext";
 import { signInWithPopup } from "firebase/auth";
+import { getCookie } from "@/utils/getCookie";
+import { useQuery } from "./useQuery";
 
 export const useLogin = () => {
   const [isCancelled, setIsCancelled] = useState(false);
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
   const { dispatch } = useAuthContext();
+  const query = useQuery();
 
   const checkUserDoc = async (uid) => {
     const userRef = doc(db, "users", uid);
@@ -38,7 +41,22 @@ export const useLogin = () => {
 
           if (exists) {
             const userRef = doc(db, "users", res.user.uid);
-            await updateDoc(userRef, { online: true });
+            await updateDoc(userRef, {
+              online: true,
+              user_agent: navigator.userAgent,
+              origin: window.location.href.split("?")[0],
+              fbp: getCookie("_fbp"),
+              fbc: getCookie("_fbc"),
+              utm: {
+                source: query.get("utm_source") || getCookie("utm_source"),
+                medium: query.get("utm_medium") || getCookie("utm_medium"),
+                campaign:
+                  query.get("utm_campaign") || getCookie("utm_campaign"),
+                term: query.get("utm_term") || getCookie("utm_term"),
+                content: query.get("utm_content") || getCookie("utm_content"),
+              },
+              sck: query.get("sck") || getCookie("sck"),
+            });
             dispatch({ type: "LOGIN", payload: res.user });
             break;
           }

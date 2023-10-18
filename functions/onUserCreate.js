@@ -1,6 +1,12 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const mailchimp = require("@mailchimp/mailchimp_marketing");
+const sendEventToFacebook = require("./actions/sendEventToFacebook");
+const {
+  createContactOnMailchimp,
+  updateContactTagsOnMailchimp,
+} = require("./actions/sendEventToMailchimp");
+const { getUniqueId } = require("./utils/getUniqueId");
 
 // TODO: Definir a sua chave de API do Mailchimp como variável de configuração
 mailchimp.setConfig({
@@ -16,71 +22,45 @@ exports.onUserCreate = functions.firestore
   .document("users/{userId}")
   .onCreate(async (snap, context) => {
     const userData = snap.data();
-    const email = userData.email;
+    userData.event_name = "Lead";
+    userData.event_id = getUniqueId();
+    userData.action_source = "website";
+    userData.event_source_url = `https://${userData.origin}`;
 
-    // Alterar pelo ID da sua audiência no Mailchimp
-    const listId = "14ac8d6a41";
+    const promises = [
+      createContactOnMailchimp(mailchimp, listId, userData),
+      sendEventToFacebook(userData),
+    ];
 
-    const subscribingUser = {
-      firstName: userData.name.split(" ")[0],
-      lastName: userData.name.split(" ")[1],
-      email,
-    };
+    const results = await Promise.allSettled(promises);
 
-    // Função que atualiza as tags do contato no Mailchimp
-    async function updateTags(subscriberHash, tags) {
-      const response = await mailchimp.lists.updateListMemberTags(
-        listId,
-        subscriberHash,
-        {
-          tags: [...tags],
-        }
-      );
+    const subscriberHash = results[0].value;
 
-      console.log(
-        `The return type for this endpoint is null, so this should be true: ${
-          response === null
-        }`
-      );
-    }
-
-    async function createContact() {
-      const response = await mailchimp.lists.addListMember(listId, {
-        email_address: subscribingUser.email,
-        status: "subscribed",
-        merge_fields: {
-          FNAME: subscribingUser.firstName,
-          LNAME: subscribingUser.lastName,
-        },
-      });
-
-      console.log(
-        `Successfully added contact as an audience member. The contact's id is ${response.id}.`
-      );
-
-      return response.id;
-    }
-
-    // Função para atualizar os MERGE_FIELDS no Mailchimp
-    async function updateMember() {
-      const response = await mailchimp.lists.updateListMember(
-        "list_id",
-        "subscriber_hash",
-        {
-          merge_fields: {
-            PLAN: "PRO",
-          },
-        }
-      );
+    if (results[1].status === "rejected") {
+      console.error("Erro ao enviar evento para o Facebook", results[1].reason);
     }
 
     try {
-      const subscriberHash = await createContact();
-      await updateTags(subscriberHash, [
-        { name: "teste", status: "active" },
-        { name: "teste2", status: "active" },
-      ]);
+      await snap.ref.update({
+        fbc: admin.firestore.FieldValue.delete(),
+        fbp: admin.firestore.FieldValue.delete(),
+        user_agent: admin.firestore.FieldValue.delete(),
+      });
     } catch (error) {
-      console.error("Erro ao adicionar usuário ao Mailchimp", error);
+      console.error("Erro ao deletar campos do usuário", error);
     }
+
+    if (results[0].status === "rejected") {
+      console.error("Erro ao criar contato no Mailchimp", results[0].reason);
+      return { success: false, message: "Error creating contact" };
+    }
+
+    await updateContactTagsOnMailchimp(subscriberHash, [
+      { name: "lead", status: "active" },
+    ]);
+
+    return {
+      success: true,
+      message: "Successfully created contact " + userData.email,
+    };
   });
