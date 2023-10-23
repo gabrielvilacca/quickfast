@@ -1,8 +1,9 @@
+const functions = require("firebase-functions");
 const mailchimp = require("@mailchimp/mailchimp_marketing");
 const md5 = require("md5");
 
 // TODO: Definir a sua chave de API
-// functions:config:set mailchimp.api_key="sua_chave_de_api"
+// firebase functions:config:set mailchimp.api_key="sua_chave_de_api"
 mailchimp.setConfig({
   apiKey: functions.config().mailchimp.api_key,
   server: "us12", // TODO: Alterar pelo servidor da sua conta (últimos 4 caracteres da sua chave de API)
