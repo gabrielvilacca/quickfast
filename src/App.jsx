@@ -6,6 +6,8 @@ import { getCookie } from "@/utils/getCookie";
 
 function App() {
   useEffect(() => {
+    if (process.env.NODE_ENV === "development") return;
+
     const options = {
       autoConfig: true,
       debug: true,

@@ -26,6 +26,8 @@ function AppRoutes() {
   const isMobile = useMediaQuery("(max-width: 640px)");
 
   useEffect(() => {
+    if (process.env.NODE_ENV === "development") return;
+
     if (authIsReady && user && !sessionStorage.getItem("pixelInitialized")) {
       // Dados para AdvancedMatching
       const advancedMatching = {

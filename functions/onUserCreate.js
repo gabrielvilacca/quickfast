@@ -21,6 +21,16 @@ exports.onUserCreate = functions.firestore
     userData.action_source = "website";
     userData.event_source_url = `https://${userData.origin}`;
 
+    if (
+      userData.origin.includes("localhost") ||
+      userData.origin.includes("127.0.0.1")
+    ) {
+      return {
+        success: true,
+        message: "Skipped function, origin is localhost",
+      };
+    }
+
     const promises = [
       createContactOnMailchimp(userData),
       sendEventToFacebook(userData),

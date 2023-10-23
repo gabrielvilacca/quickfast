@@ -8,7 +8,7 @@ const CustomData = bizSdk.CustomData;
 
 const pixelId = "PIXEL"; // TODO: Alterar para o ID do seu pixel
 // TODO: Definir o seu token de acesso
-// functions:config:set facebook.token="seu_token"
+// firebase functions:config:set facebook.token="seu_token"
 const accessToken = functions.config().facebook.token;
 
 function hashData(data, shouldConvertToLowercase = true) {
