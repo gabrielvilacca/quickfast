@@ -4,6 +4,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, db, timestamp } from "../firebase/config";
 import { useAuthContext } from "./useAuthContext";
 import { useQuery } from "./useQuery";
+import { getCookie } from "@/utils/getCookie";
 
 export const useSignup = () => {
   const query = useQuery();
