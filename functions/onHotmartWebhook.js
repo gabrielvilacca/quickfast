@@ -27,6 +27,14 @@ function calculateExpirationDate(planName, creationDate) {
   return expirationDate;
 }
 
+const getRecipient = (email) => {
+  if (email.includes("teste")) {
+    return "rafael@microsaasmilionario.com.br"; // TODO: Alterar e-mail de teste
+  }
+
+  return email;
+};
+
 app.post("/", async (req, res) => {
   const webhook = req.body;
 
@@ -107,7 +115,7 @@ app.post("/", async (req, res) => {
 
         const mailOptions = {
           from: "Fulano <noreply@testesvariados.shop>", // TODO: Alterar nome e e-mail
-          to: "rrrpieroni@gmail.com",
+          to: getRecipient(webhook.data.buyer.email),
           subject: "Acesse o Template App agora mesmo!", // TODO: Alterar o nome do app
           html: `
           <div>
