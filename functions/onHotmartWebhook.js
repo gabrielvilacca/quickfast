@@ -28,8 +28,8 @@ function calculateExpirationDate(planName, creationDate) {
 }
 
 const getRecipient = (email) => {
-  if (email.includes("teste")) {
-    return "rafael@microsaasmilionario.com.br"; // TODO: Alterar e-mail de teste
+  if (email.includes("@example.com")) {
+    return ""; // TODO: Colocar seu e-mail para teste
   }
 
   return email;
@@ -187,7 +187,7 @@ app.post("/", async (req, res) => {
 
       // Definindo o objeto de assinatura
       const subscription = {
-        status: "chargeback",
+        status: "CHARGEBACK",
         statusDate: new Date(webhook.creation_date),
       };
 
