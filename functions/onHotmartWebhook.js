@@ -44,12 +44,15 @@ app.post("/", async (req, res) => {
     if (webhook.event === "PURCHASE_APPROVED") {
       let userRecord;
       //Consultando a coleção "users" pelo e-mail para obter o ID
-      userRecord = await auth.getUserByEmail(webhook.data.buyer.email);
+      try {
+        userRecord = await auth.getUserByEmail(webhook.data.buyer.email);
+      } catch (error) {
+        console.log("Usuário não encontrado, criando novo usuário.");
+      }
 
       // Verificar se encontrou o usuário
       if (!userRecord) {
         const password = generatePassword();
-        const auth = admin.auth();
 
         userRecord = await auth.createUser({
           email: webhook.data.buyer.email,
