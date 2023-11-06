@@ -12,8 +12,8 @@ exports.onBeforeCreate = functions.auth.user().onCreate(async (user) => {
     if (user.providerData[0].providerId.includes("google.com")) {
       try {
         const userDoc = {
-          uid: user.uid,
-          displayName: user.displayName,
+          id: user.uid,
+          name: user.displayName,
           email: user.email,
           online: true,
         };
