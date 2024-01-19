@@ -1,3 +1,4 @@
+const functions = require("firebase-functions");
 const bizSdk = require("facebook-nodejs-business-sdk");
 const crypto = require("crypto");
 
