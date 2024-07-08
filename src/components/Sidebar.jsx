@@ -15,6 +15,7 @@ import Loading from "./Loading";
 import { useState } from "react";
 import { ProfilePicDialog } from "./ProfilePicDialog";
 import { routeOptions } from "@/constants/constants.jsx";
+import { UserCircleIcon } from "lucide-react";
 
 export default function Sidebar({ rerender, setRerender }) {
   const navigate = useNavigate();
@@ -27,16 +28,13 @@ export default function Sidebar({ rerender, setRerender }) {
   };
 
   return (
-    <nav className="relative overflow-y-auto min-h-[calc(100vh_-_64px)] hidden sm:flex sm:flex-col sm:justify-between h-full w-[250px] bg-background border border-border">
+    <nav className="relative overflow-y-auto min-h-[calc(100vh_-_64px)] hidden sm:flex sm:flex-col sm:justify-between h-full w-[250px] bg-[#07271f] text-white">
       {isPending && <Loading />}
-      <div className="bg-background fixed h-[calc(100vh_-_96px)] w-[248px] sm:flex-grow sm:flex sm:flex-col sm:justify-between">
+      <div className="fixed h-[calc(100vh_-_96px)] w-[248px] sm:flex-grow sm:flex sm:flex-col sm:justify-between">
         <div>
-          <div className="py-5 px-2.5">
-            <Logo size="sm" />
-          </div>
-          <div className="flex items-center gap-3 p-5">
+          <div className="flex items-center gap-3 p-5 ml-12 rounded-md">
             <ProfilePicDialog setRerender={setRerender}>
-              <Avatar className="h-12 w-12" role="button">
+              <Avatar className="h-24 w-24 items-center justify-center flex cursor-pointer">
                 <AvatarImage src={user.photoURL?.replace("=s96-c", "")} />
                 <AvatarFallback className="bg-primary text-secondary">
                   {getInitials(user.displayName)}
@@ -45,47 +43,51 @@ export default function Sidebar({ rerender, setRerender }) {
             </ProfilePicDialog>
 
             <div>
-              <p className="font-medium">{user.displayName}</p>
-              <p className="text-muted-foreground/75 text-sm">
-                Premium account
-              </p>
+              <p className="font-medium text-lg">{user.displayName}</p>
             </div>
           </div>
           <div
             role="button"
-            className={`py-3 px-5 flex items-center gap-3 transition-all duration-300 hover:bg-primary/5 ${
-              -1 === activeRoute ? "bg-primary/5 font-medium" : ""
-            }`}
+            className={`py-10 px-5 flex items-center gap-3 transition-all duration-300 rounded-md  mt-3
+              hover:text-white ${
+                activeRoute === -1
+                  ? "bg-[#1a3d32] font-medium text-xl"
+                  : "text-xl font-medium text-neutral-400"
+              }`}
             onClick={() => {
               setActiveRoute(-1);
               navigate("/account");
             }}
           >
-            <PersonIcon />
+            <UserCircleIcon className="w-6 h-6 hover:text-green-500" />
             <p className="text-md">Minha conta</p>
           </div>
-          <Separator className="my-2.5" />
           <div className="box-border">
             {routeOptions.map((option, index) => (
               <div
                 key={option.route}
                 role="button"
-                className={`py-3 px-5 flex items-center gap-3 transition-all duration-300 hover:bg-primary/5  ${
-                  index === activeRoute ? "bg-primary/5 font-medium" : ""
-                }`}
+                className={`py-10 px-5 flex items-center gap-3 transition-all duration-300 rounded-md mt-1
+                  hover:text-white ${
+                    index === activeRoute
+                      ? "bg-[#1a3d32] font-medium text-xl"
+                      : "text-xl font-medium text-neutral-400"
+                  }`}
                 onClick={() => {
                   setActiveRoute(index);
                   navigate(option.route);
                 }}
               >
-                {option.icon}
+                <p className="hover:text-green-500">{option.icon}</p>
                 <p className="text-md">{option.name}</p>
               </div>
             ))}
           </div>
         </div>
         <div>
-          <Separator className="my-3" />
+          <div className="py-3 mt-10 px-2.5">
+            <Logo size="md" />
+          </div>
           <div className="flex flex-col py-2.5">
             <Button
               size="noPadding"
@@ -94,9 +96,12 @@ export default function Sidebar({ rerender, setRerender }) {
                 setActiveRoute(3.14);
                 navigate("/help");
               }}
-              className={`justify-start px-5 py-4 w-full opacity-50 transition-all duration-300 hover:bg-primary/10 ${
-                activeRoute === 3.14 ? "bg-primary/10 font-medium" : ""
-              }`}
+              className={`justify-start px-5 py-1 w-full transition-all duration-300 rounded-md
+                hover:bg-[#1a3d32] ${
+                  activeRoute === 3.14
+                    ? "bg-black font-medium"
+                    : "text-neutral-400"
+                }`}
             >
               <InfoCircledIcon className="w-4 h-4 mr-2" />
               Central de Ajuda
@@ -105,7 +110,7 @@ export default function Sidebar({ rerender, setRerender }) {
               size="noPadding"
               variant="ghost"
               onClick={handleLogout}
-              className="justify-start px-5 py-4 w-full opacity-50 transition-all duration-300 hover:bg-primary/10"
+              className="justify-start px-5 py-1 w-full text-neutral-400 transition-all duration-300 rounded-md hover:bg-primary/10"
             >
               <ExitIcon className="w-4 h-4 mr-2" />
               Sair da conta

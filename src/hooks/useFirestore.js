@@ -7,6 +7,10 @@ import {
   doc,
   setDoc,
   serverTimestamp,
+  getDocs,
+  getDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { db, timestamp } from "../firebase/config";
 
@@ -206,6 +210,59 @@ export const useFirestore = (coll) => {
     }
   };
 
+  // Função para buscar documentos de subcoleção
+  const getSubDocuments = async (docId, subcoll) => {
+    dispatch({ type: "IS_PENDING" });
+    try {
+      const subcollRef = collection(db, `${coll}/${docId}/${subcoll}`);
+      const snapshot = await getDocs(subcollRef);
+      const subDocuments = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      dispatchIfNotCancelled({ type: "SUCCESS", payload: subDocuments });
+      return subDocuments;
+    } catch (err) {
+      dispatchIfNotCancelled({ type: "ERROR", payload: err.message });
+      return [];
+    }
+  };
+
+  const getDocuments = async () => {
+    dispatch({ type: "IS_PENDING" });
+    try {
+      const snapshot = await getDocs(ref);
+      const documents = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      dispatchIfNotCancelled({ type: "SUCCESS", payload: documents });
+      return documents;
+    } catch (err) {
+      dispatchIfNotCancelled({ type: "ERROR", payload: err.message });
+      return [];
+    }
+  };
+
+  // Função para buscar um documento específico pelo ID
+  const getDocument = async (docId) => {
+    dispatch({ type: "IS_PENDING" });
+    try {
+      const docRef = doc(db, coll, docId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const document = { id: docSnap.id, ...docSnap.data() };
+        dispatchIfNotCancelled({ type: "SET_DOCUMENT", payload: document });
+        return document;
+      } else {
+        throw new Error("Documento não encontrado");
+      }
+    } catch (err) {
+      dispatchIfNotCancelled({ type: "ERROR", payload: err.message });
+      return null;
+    }
+  };
+
   useEffect(() => () => setIsCancelled(true), []);
 
   return {
@@ -218,5 +275,8 @@ export const useFirestore = (coll) => {
     deleteSubDocument,
     response,
     serverTimestamp,
+    getDocuments,
+    getSubDocuments,
+    getDocument, // Adicionando a nova função ao hook
   };
 };

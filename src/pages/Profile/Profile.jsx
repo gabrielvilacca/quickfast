@@ -7,7 +7,7 @@ import { Button } from "@/shadcn/components/ui/button";
 
 // TODO: Trocar pela URL da sua Cloud Function
 const url =
-  "https://us-central1-projeto-teste-405b3.cloudfunctions.net/changePassword";
+  "https://us-central1-despesa-simples-9dd5c.cloudfunctions.net/changePassword";
 
 export default function Profile({ rerender, setRerender }) {
   const { user } = useAuthContext();

@@ -18,6 +18,11 @@ import Help from "./pages/Help/Help";
 import { SubscriptionProvider } from "./contexts/SubscriptionContext";
 import ReactPixel from "react-facebook-pixel";
 import { hashString } from "./utils/hashString";
+import Expense from "./pages/Expenses/Expense";
+import ProjectList from "./pages/Home/ProjectList";
+import ProjectDetails from "./pages/Home/ProjectDetails";
+import Settings from "./pages/Settings/Settings";
+import Reports from "./pages/Reports/Reports";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
@@ -77,6 +82,11 @@ function AppRoutes() {
                     />
                     <Route path="/help" element={<Help />} />
                     <Route path="*" element={<Home />} />
+                    <Route path="/expense" element={<Expense />} />
+                    <Route path="/project" element={<ProjectList />} />
+                    <Route path="/project/:id" element={<ProjectDetails />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/reports" element={<Reports />} />
                   </Routes>
                 </div>
               </SubscriptionProvider>
