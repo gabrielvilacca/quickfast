@@ -1,4 +1,10 @@
-import { Folder, LayoutDashboard, Receipt, Settings } from "lucide-react";
+import {
+  Folder,
+  LayoutDashboard,
+  Receipt,
+  Settings,
+  Users,
+} from "lucide-react";
 
 export const routeOptions = [
   {
@@ -10,5 +16,10 @@ export const routeOptions = [
     route: "/reports",
     name: "Relatórios",
     icon: <Folder />,
+  },
+  {
+    route: "/team",
+    name: "Equipe",
+    icon: <Users />,
   },
 ];

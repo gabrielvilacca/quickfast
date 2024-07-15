@@ -21,8 +21,8 @@ import { hashString } from "./utils/hashString";
 import Expense from "./pages/Expenses/Expense";
 import ProjectList from "./pages/Home/ProjectList";
 import ProjectDetails from "./pages/Home/ProjectDetails";
-import Settings from "./pages/Settings/Settings";
 import Reports from "./pages/Reports/Reports";
+import Team from "./pages/Team/Team";
 
 function AppRoutes() {
   const { user, authIsReady } = useAuthContext();
@@ -85,7 +85,7 @@ function AppRoutes() {
                     <Route path="/expense" element={<Expense />} />
                     <Route path="/project" element={<ProjectList />} />
                     <Route path="/project/:id" element={<ProjectDetails />} />
-                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/team" element={<Team />} />
                     <Route path="/reports" element={<Reports />} />
                   </Routes>
                 </div>

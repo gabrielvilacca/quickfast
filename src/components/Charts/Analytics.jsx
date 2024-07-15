@@ -1,102 +1,98 @@
 import React, { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import {
-  Chart,
+  Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { useFirestore } from "@/hooks/useFirestore";
+import { useExpenses } from "@/hooks/useExpenses";
 import { Card } from "@/shadcn/components/ui/card";
 
 // Register Chart.js components
-Chart.register(
+ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
 );
 
-export default function Analytics() {
-  const { getSubDocuments } = useFirestore("projects");
+export default function Analytics({ projectId }) {
+  const expenses = useExpenses(projectId);
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
 
   useEffect(() => {
-    const fetchExpenses = async () => {
-      try {
-        const expenses = await getSubDocuments("project-id", "expenses");
-        const monthlyExpenses = {};
+    if (expenses.length > 0) {
+      const monthlyExpenses = new Array(12).fill(0);
 
-        expenses.forEach((expense) => {
-          const date = new Date(expense.date);
-          const month = date.getMonth() + 1; // getMonth() returns 0-11, so add 1
-          const year = date.getFullYear();
-          const key = `${year}-${month < 10 ? `0${month}` : month}`;
+      expenses.forEach((expense) => {
+        const date = new Date(expense.date);
+        const month = date.getMonth(); // getMonth() returns 0-11
+        monthlyExpenses[month] += parseFloat(expense.price);
+      });
 
-          if (!monthlyExpenses[key]) {
-            monthlyExpenses[key] = 0;
-          }
-          monthlyExpenses[key] += parseFloat(expense.price);
-        });
+      const chartData = {
+        labels: [
+          "Janeiro",
+          "Fevereiro",
+          "Março",
+          "Abril",
+          "Maio",
+          "Junho",
+          "Julho",
+          "Agosto",
+          "Setembro",
+          "Outubro",
+          "Novembro",
+          "Dezembro",
+        ],
+        datasets: [
+          {
+            label: "Despesas Mensais",
+            data: monthlyExpenses,
+            backgroundColor: "#32BE60",
+          },
+        ],
+      };
 
-        const labels = Object.keys(monthlyExpenses).sort();
-        const data = labels.map((label) => monthlyExpenses[label]);
-
-        setChartData({
-          labels: labels,
-          datasets: [
-            {
-              label: "Despesas Mensais",
-              data: data,
-              borderColor: "#32BE60",
-              backgroundColor: "#32BE60",
-              fill: true,
-            },
-          ],
-        });
-
-        setChartOptions({
-          responsive: true,
-          plugins: {
-            legend: {
-              position: "top",
-            },
+      const chartOptions = {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: "top",
+          },
+          title: {
+            display: true,
+            text: "Despesas Mensais",
+          },
+        },
+        scales: {
+          y: {
             title: {
               display: true,
-              text: "Despesas Mensais",
+              text: "Despesas (R$)",
             },
+            beginAtZero: true,
           },
-          scales: {
-            y: {
-              title: {
-                display: true,
-                text: "Despesas (R$)",
-              },
-              beginAtZero: true,
-            },
-          },
-        });
-      } catch (error) {
-        console.error("Erro ao buscar despesas:", error);
-      }
-    };
+        },
+      };
 
-    fetchExpenses();
-  }, [getSubDocuments]);
+      setChartData(chartData);
+      setChartOptions(chartOptions);
+    }
+  }, [expenses]);
 
   return (
-    <Card className="p-5 w-4/4 md:w-[500px] mt-2 bg-secondary shadow-lg">
+    <Card className="p-5 w-full md:w-[500px] mt-2 bg-secondary shadow-lg">
       <h2 className="text-2xl font-bold">Despesas Mensais</h2>
       {chartData.labels ? (
-        <Line data={chartData} options={chartOptions} />
+        <Bar data={chartData} options={chartOptions} />
       ) : (
         <p>Carregando dados...</p>
       )}

@@ -39,7 +39,7 @@ export default function Chart({ projectId }) {
       <CardChart project={project} />
       <div className="mt-5 gap-4 md:flex">
         <div className="w-full md:w-[500px]">
-          <Analytics />
+          <Analytics projectId={id} />
         </div>
         <div className="w-full lg:w-1/2 flex flex-col">
           <HorizonChart project={project} />

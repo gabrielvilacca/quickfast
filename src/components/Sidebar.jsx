@@ -48,7 +48,7 @@ export default function Sidebar({ rerender, setRerender }) {
           </div>
           <div
             role="button"
-            className={`py-10 px-5 flex items-center gap-3 transition-all duration-300 rounded-md  mt-3
+            className={`py-6 px-5 flex items-center gap-3 transition-all duration-300 rounded-md  mt-3
               hover:text-white ${
                 activeRoute === -1
                   ? "bg-[#1a3d32] font-medium text-xl"
@@ -67,7 +67,7 @@ export default function Sidebar({ rerender, setRerender }) {
               <div
                 key={option.route}
                 role="button"
-                className={`py-10 px-5 flex items-center gap-3 transition-all duration-300 rounded-md mt-1
+                className={`py-6 px-5 flex items-center gap-3 transition-all duration-300 rounded-md mt-1
                   hover:text-white ${
                     index === activeRoute
                       ? "bg-[#1a3d32] font-medium text-xl"

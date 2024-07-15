@@ -51,7 +51,7 @@ const ExpenseCard = ({ expense }) => {
   };
 
   return (
-    <Card className="m-5 mb-0 bg-secondary rounded-lg shadow-lg border border-gray-200 w-[250px]">
+    <Card className="m-5 mb-0 bg-secondary rounded-lg shadow-lg border border-gray-200 w-[500px]">
       <CardHeader className="p-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
           <CardTitle className="text-xl font-semibold text-gray-800">

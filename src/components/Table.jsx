@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/shadcn/components/ui/table";
 import { Card } from "@/shadcn/components/ui/card";
+import { Button } from "@/shadcn/components/ui/button"; // Assumindo que você tenha um componente Button
 
 const TableExpense = ({ expenses, projectId }) => {
   if (!expenses || expenses.length === 0) {
@@ -26,6 +27,29 @@ const TableExpense = ({ expenses, projectId }) => {
     (acc, expense) => acc + parseFloat(expense.price),
     0
   );
+
+  const handleDownloadCSV = () => {
+    const headers = ["Despesa", "Disponibilidade", "Valor"];
+    const rows = expenses.map((expense) => [
+      expense.title,
+      expense.priority,
+      expense.price,
+    ]);
+
+    let csvContent =
+      "data:text/csv;charset=utf-8," +
+      headers.join(",") +
+      "\n" +
+      rows.map((row) => row.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "despesas.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="expense-card">
@@ -50,13 +74,16 @@ const TableExpense = ({ expenses, projectId }) => {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}>Total</TableCell>
+              <TableCell colSpan={2}>Total</TableCell>
               <TableCell className="text-right">
                 R${totalExpenses.toFixed(2)}
               </TableCell>
             </TableRow>
           </TableFooter>
         </ShadcnTable>
+        <div className="flex justify-end m-4">
+          <Button onClick={handleDownloadCSV}>Baixar CSV</Button>
+        </div>
       </Card>
     </div>
   );
