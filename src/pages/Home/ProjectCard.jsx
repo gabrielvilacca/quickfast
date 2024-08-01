@@ -89,6 +89,10 @@ const ProjectCard = ({ project }) => {
           <CardDescription className="text-gray-600 mt-2">
             {project.description}
           </CardDescription>
+          <p className="text-lg text-gray-600 flex items-center">
+            <span className="font-bold text-gray-900">Cliente:</span>
+            <span className="ml-2 font-semibold">{project.clientName}</span>
+          </p>
         </CardHeader>
         <CardContent className="p-4">
           <p className="text-lg text-gray-800">

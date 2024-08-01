@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import html2canvas from "html2canvas";
-import { useFirestore } from "@/hooks/useFirestore";
 import { Button } from "@/shadcn/components/ui/button";
 import { Separator } from "@/shadcn/components/ui/separator";
 import {
@@ -10,41 +9,21 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/shadcn/components/ui/tabs";
-import Overview from "@/components/Overview";
-import ExpenseList from "@/components/Expenses/ExpenseList"; // Certifique-se de que o caminho está correto
-import NewExpenseDialog from "../Expenses/NewExpenseDialog";
-import Chart from "@/components/Charts/Chart";
 import { useAuthContext } from "@/hooks/useAuthContext";
+import useClients from "@/hooks/useClients";
 
-const ProjectDetails = () => {
+const ClientDetails = () => {
   const { id } = useParams(); // Obter o ID da URL
-  const { document: project } = useFirestore("projects", id); // Carregar o projeto pelo ID
+  const clients = useClients(); // Obter todos os clientes
   const { user } = useAuthContext(); // Obter informações de autenticação
-  const [chartData, setChartData] = useState({});
-  const [open, setOpen] = useState(false);
+  const [client, setClient] = useState(null);
   const captureRef = useRef(null);
 
   useEffect(() => {
-    if (project) {
-      const fetchExpenses = async () => {
-        const expenses = await fetch(`/api/expenses?projectId=${id}`).then(
-          (res) => res.json()
-        );
-        const data = {
-          labels: expenses.map((exp) => exp.date),
-          datasets: [
-            {
-              label: "Expenses",
-              data: expenses.map((exp) => exp.amount),
-              backgroundColor: "rgba(75, 192, 192, 0.6)",
-            },
-          ],
-        };
-        setChartData(data);
-      };
-      fetchExpenses();
-    }
-  }, [project, id]);
+    // Encontrar o cliente pelo ID
+    const foundClient = clients.find((client) => client.id === id);
+    setClient(foundClient);
+  }, [clients, id]);
 
   const handleShare = async () => {
     if (captureRef.current) {
@@ -61,7 +40,7 @@ const ProjectDetails = () => {
 
       const link = document.createElement("a");
       link.href = imgData;
-      link.download = `project-${id}.png`;
+      link.download = `client-${id}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -69,12 +48,12 @@ const ProjectDetails = () => {
       if (navigator.share) {
         const blob = await (await fetch(imgData)).blob();
         const filesArray = [
-          new File([blob], `project-${id}.png`, { type: "image/png" }),
+          new File([blob], `client-${id}.png`, { type: "image/png" }),
         ];
         navigator
           .share({
-            title: `Project ${id}`,
-            text: "Confira os detalhes do projeto",
+            title: `Client ${id}`,
+            text: "Confira os detalhes do cliente",
             files: filesArray,
           })
           .catch((error) => console.error("Error sharing", error));
@@ -84,15 +63,14 @@ const ProjectDetails = () => {
     }
   };
 
+  if (!client) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <div className="flex m-5 justify-between">
-        <h1 className="text-3xl font-bold">Despesas</h1>
-        {user && user.role !== "client" && (
-          <NewExpenseDialog open={open} setOpen={setOpen} projectId={id}>
-            <Button onClick={() => setOpen(true)}>Nova Despesa</Button>
-          </NewExpenseDialog>
-        )}
+        <h1 className="text-3xl font-bold">Detalhes do Cliente</h1>
       </div>
       <Separator />
       <div
@@ -102,18 +80,20 @@ const ProjectDetails = () => {
         <div>
           <Tabs defaultValue="overview" className="w-[400px]">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="graphics">Gráficos</TabsTrigger>
-              <TabsTrigger value="expenses">Despesas</TabsTrigger>
+              <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+              <TabsTrigger value="details">Detalhes</TabsTrigger>
             </TabsList>
             <TabsContent value="overview">
-              <Overview projectId={id} />
+              <div className="p-4">
+                <h2 className="text-2xl font-bold">Nome: {client.name}</h2>
+                <p className="text-xl">Email: {client.email}</p>
+              </div>
             </TabsContent>
-            <TabsContent value="graphics">
-              <Chart projectId={id} />
-            </TabsContent>
-            <TabsContent value="expenses">
-              <ExpenseList projectId={id} />
+            <TabsContent value="details">
+              <div className="p-4">
+                <h2 className="text-2xl font-bold">Outros Detalhes</h2>
+                {/* Adicione outros detalhes do cliente aqui */}
+              </div>
             </TabsContent>
           </Tabs>
         </div>
@@ -127,4 +107,4 @@ const ProjectDetails = () => {
   );
 };
 
-export default ProjectDetails;
+export default ClientDetails;

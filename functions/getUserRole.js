@@ -1,6 +1,5 @@
 const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-admin.initializeApp();
+const admin = require("./firebaseConfig");
 
 exports.getUserRole = functions.https.onRequest(async (req, res) => {
   const { userId, teamId } = req.body;

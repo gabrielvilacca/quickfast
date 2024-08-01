@@ -22,8 +22,8 @@ const corsOptions = {
       "http://127.0.0.1:5173",
       "http://localhost:5174",
       "https://127.0.0.1:5174",
-      "https://template-90106.web.app",
-      "https://app.seudominio.com.br",
+      "https://despesa-simples-9dd5c.web.app",
+      "https://app.despesasimples.com.br",
     ];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);

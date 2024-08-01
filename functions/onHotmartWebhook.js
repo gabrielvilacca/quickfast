@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
+const nodemailer = require("nodemailer");
 
 if (admin.apps.length === 0) {
   admin.initializeApp();
@@ -10,9 +11,22 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Função para gerar senha
+function generatePassword() {
+  const length = 12;
+  const charset =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let password = "";
+  for (let i = 0, n = charset.length; i < length; ++i) {
+    password += charset.charAt(Math.floor(Math.random() * n));
+  }
+  return password;
+}
+
+// Função para calcular data de expiração
 function calculateExpirationDate(planName, creationDate) {
   const createdDate = new Date(creationDate);
-  let expirationDate = new Date(creationDate); // inicializado com a data de criação
+  let expirationDate = new Date(creationDate); // Inicializado com a data de criação
 
   if (planName.includes("Mensal")) {
     expirationDate.setMonth(createdDate.getMonth() + 1);
@@ -38,7 +52,7 @@ const getRecipient = (email) => {
 app.post("/", async (req, res) => {
   const webhook = req.body;
 
-  // Add webhook to webhooks collection
+  // Adicionando webhook à coleção webhooks
   await admin.firestore().collection("webhooks").add(webhook);
 
   if (Object.keys(webhook).length === 0) {
@@ -51,7 +65,7 @@ app.post("/", async (req, res) => {
 
     if (webhook.event === "PURCHASE_APPROVED") {
       let userRecord;
-      //Consultando a coleção "users" pelo e-mail para obter o ID
+      // Consultando a coleção "users" pelo e-mail para obter o ID
       try {
         userRecord = await auth.getUserByEmail(webhook.data.buyer.email);
       } catch (error) {
@@ -79,7 +93,6 @@ app.post("/", async (req, res) => {
 
         // Calculando a data de renovação do plano
         const creationDate = webhook.creation_date;
-
         const renewalDate = calculateExpirationDate(
           webhook.data.subscription.plan.name,
           creationDate
@@ -104,35 +117,38 @@ app.post("/", async (req, res) => {
 
         // Enviar e-mail com os dados de acesso
         const transporter = nodemailer.createTransport({
-          host: "smtp.hostinger.com",
-          port: 465,
-          secure: true,
+          service: "gmail",
           auth: {
-            user: "equipe@testesvariados.shop",
-            pass: "Teste123!",
+            user: "gabrielvilacca@gmail.com", // Seu e-mail do Gmail
+            pass: "m3rcedes4321", // Sua senha de aplicativo do Gmail
           },
         });
 
+        // Enviar e-mail com os dados de acesso
+        // const transporter = nodemailer.createTransport({
+        //   host: "smtp.hostinger.com",
+        //   port: 465,
+        //   secure: true,
+        //   auth: {
+        //     user: "equipe@testesvariados.shop",
+        //     pass: "Teste123!",
+        //   },
+        // });
+
         const mailOptions = {
-          from: "Fulano <noreply@testesvariados.shop>", // TODO: Alterar nome e e-mail
+          from: "Gabriel | Despesa Simples <noreply@despesasimples.com>", // TODO: Alterar nome e e-mail
           to: getRecipient(webhook.data.buyer.email),
-          subject: "Acesse o Template App agora mesmo!", // TODO: Alterar o nome do app
+          subject: "Acesse o Despesa Simples agora mesmo!", // TODO: Alterar o nome do app
           html: `
           <div>
             <div style="text-align: center;">
-              <h2>Olá, ${webhook.data.buyer.name}, seja bem-vindo ao Template App!</h2>
+              <h2>Olá, ${webhook.data.buyer.name}, seja bem-vindo ao Despesa Simples!</h2>
             </div>
             <div style="text-align: left;">
-              <p>
-                Acesse imediatamente nossa plataforma, clicando no botão e informando os dados de acesso:
-              </p>
+              <p>Acesse imediatamente nossa plataforma, clicando no botão e informando os dados de acesso:</p>
               <p>E-mail: <b>${webhook.data.buyer.email}</b></p>
               <p>Senha: <b>${password}</b></p>
-              <a
-                href="https://app.seuapp.com"
-                style="font-weight:bold;border-radius:6px;width:100%;text-align:center;display: inline-block; padding: 16px 0; color: white; background-color: #007bff; text-decoration: none;"
-                >Quero Acessar Agora</a
-              >
+              <a href="https://app.despesasimples.com" style="font-weight:bold;border-radius:6px;width:100%;text-align:center;display: inline-block; padding: 16px 0; color: white; background-color: #007bff; text-decoration: none;">Quero Acessar Agora</a>
             </div>
           </div>`, // TODO: Alterar dados no template de e-mail
         };
@@ -147,7 +163,6 @@ app.post("/", async (req, res) => {
 
       // Calculando a data de renovação do plano
       const creationDate = webhook.creation_date;
-
       const renewalDate = calculateExpirationDate(
         webhook.data.subscription.plan.name,
         creationDate
@@ -170,7 +185,7 @@ app.post("/", async (req, res) => {
         .doc(userId)
         .set(subscription, { merge: true });
     } else if (webhook.event === "PURCHASE_CHARGEBACK") {
-      //Consultando a coleção "users" pelo e-mail para obter o ID
+      // Consultando a coleção "users" pelo e-mail para obter o ID
       const userSnapshot = await db
         .collection("users")
         .where("email", "==", webhook.data.buyer.email)
@@ -196,7 +211,7 @@ app.post("/", async (req, res) => {
         .doc(userId)
         .set(subscription, { merge: true });
     } else if (webhook.event === "PURCHASE_CANCELED") {
-      //Consultando a coleção "users" pelo e-mail para obter o ID
+      // Consultando a coleção "users" pelo e-mail para obter o ID
       const userSnapshot = await db
         .collection("users")
         .where("email", "==", webhook.data.buyer.email)
@@ -222,7 +237,7 @@ app.post("/", async (req, res) => {
         .doc(userId)
         .set(subscription, { merge: true });
     } else if (webhook.event === "SWITCH_PLAN") {
-      //Consultando a coleção "users" pelo e-mail para obter o ID
+      // Consultando a coleção "users" pelo e-mail para obter o ID
       const userSnapshot = await db
         .collection("users")
         .where("email", "==", webhook.data.buyer.email)
@@ -240,13 +255,21 @@ app.post("/", async (req, res) => {
       const newPlan = webhook.data.plans.find((plan) => plan.current).name;
       const oldPlan = webhook.data.plans.find((plan) => !plan.current).name;
 
+      // Calculando a data de renovação do plano
+      const creationDate = webhook.creation_date;
+      const renewalDate = calculateExpirationDate(newPlan, creationDate);
+
       // Definindo o objeto de assinatura
       const subscription = {
-        status: webhook.data.subscription.status,
-        statusDate: new Date(webhook.creation_date),
-        switch_plan_date: new Date(webhook.data.switch_plan_date),
+        status: "ACTIVE",
         plan: newPlan,
         oldPlan: oldPlan,
+        price: webhook.data.purchase.price.value,
+        purchaseDate: new Date(webhook.creation_date),
+        renewalDate,
+        statusDate: new Date(webhook.creation_date),
+        ownerId: userId,
+        ownerEmail: webhook.data.buyer.email,
       };
 
       await db
@@ -254,7 +277,7 @@ app.post("/", async (req, res) => {
         .doc(userId)
         .set(subscription, { merge: true });
     } else if (webhook.event === "SUBSCRIPTION_CANCELLATION") {
-      //Consultando a coleção "users" pelo e-mail para obter o ID
+      // Consultando a coleção "users" pelo e-mail para obter o ID
       const userSnapshot = await db
         .collection("users")
         .where("email", "==", webhook.data.buyer.email)
@@ -271,7 +294,7 @@ app.post("/", async (req, res) => {
 
       // Definindo o objeto de assinatura
       const subscription = {
-        status: "CANCELED",
+        status: "CANCELLED",
         statusDate: new Date(webhook.creation_date),
       };
 
@@ -280,7 +303,7 @@ app.post("/", async (req, res) => {
         .doc(userId)
         .set(subscription, { merge: true });
     } else if (webhook.event === "PURCHASE_DELAYED") {
-      //Consultando a coleção "users" pelo e-mail para obter o ID
+      // Consultando a coleção "users" pelo e-mail para obter o ID
       const userSnapshot = await db
         .collection("users")
         .where("email", "==", webhook.data.buyer.email)
@@ -297,7 +320,7 @@ app.post("/", async (req, res) => {
 
       // Definindo o objeto de assinatura
       const subscription = {
-        status: "DELAYED",
+        status: "PAST_DUE",
         statusDate: new Date(webhook.creation_date),
       };
 
@@ -307,11 +330,11 @@ app.post("/", async (req, res) => {
         .set(subscription, { merge: true });
     }
 
-    return res.status(201).send("Webhook processado com sucesso!");
+    return res.status(200).send("Webhook recebido com sucesso.");
   } catch (error) {
-    console.log(`Erro ao processar o webhook com o ID: ${webhook.id} `, error);
-    return res.status(500).send("Erro interno ao processar o webhook.");
+    console.error(error);
+    return res.status(500).send("Erro ao processar o webhook.");
   }
 });
 
-exports.onHotmartWebhook = functions.https.onRequest(app);
+exports.webhook = functions.https.onRequest(app);

@@ -28,7 +28,7 @@ export default function Sidebar({ rerender, setRerender }) {
   };
 
   return (
-    <nav className="relative overflow-y-auto min-h-[calc(100vh_-_64px)] hidden sm:flex sm:flex-col sm:justify-between h-full w-[250px] bg-[#07271f] text-white">
+    <nav className="relative overflow-y-auto min-h-[calc(100vh_-_64px)] hidden sm:flex sm:flex-col sm:justify-between h-full w-[250px] bg-[#07271f]  text-white">
       {isPending && <Loading />}
       <div className="fixed h-[calc(100vh_-_96px)] w-[248px] sm:flex-grow sm:flex sm:flex-col sm:justify-between">
         <div>

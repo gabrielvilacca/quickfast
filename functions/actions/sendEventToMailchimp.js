@@ -2,14 +2,12 @@ const functions = require("firebase-functions");
 const mailchimp = require("@mailchimp/mailchimp_marketing");
 const md5 = require("md5");
 
-// TODO: Definir a sua chave de API
-// firebase functions:config:set mailchimp.api_key="sua_chave_de_api"
 mailchimp.setConfig({
   apiKey: functions.config().mailchimp.api_key,
-  server: "us12", // TODO: Alterar pelo servidor da sua conta (últimos 4 caracteres da sua chave de API)
+  server: "us14",
 });
 
-const listId = "14ac8d6a41"; // TODO: Alterar para a sua lista de contatos
+const listId = "5c539e1742";
 
 async function createContactOnMailchimp(userData) {
   const { email, name, phone, utm, origin, sck } = userData;
