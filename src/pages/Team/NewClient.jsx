@@ -15,7 +15,6 @@ import { Button } from "@/shadcn/components/ui/button";
 import { useFirestore } from "@/hooks/useFirestore";
 import { toast, useToast } from "@/shadcn/components/ui/use-toast";
 import { Eye, EyeOff } from "lucide-react";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function NewClient({
   children,
@@ -31,21 +30,16 @@ export default function NewClient({
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Firebase Authentication
-  const auth = getAuth();
-
   const createClient = async (e) => {
     e.preventDefault();
     if (!name || !email || !password) return;
 
     try {
-      // Criação do usuário no Firebase Authentication
-      await createUserWithEmailAndPassword(auth, email, password);
-
-      // Adicionar cliente ao Firestore
+      // Adicionar cliente ao Firestore com as informações fornecidas
       const result = await addClient({
         name,
         email,
+        password, // Note que aqui estamos salvando a senha no Firestore. Certifique-se de que isso está de acordo com as práticas de segurança.
         deleted: false,
       });
 

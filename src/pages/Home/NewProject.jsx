@@ -12,9 +12,12 @@ import {
 } from "@/shadcn/components/ui/dialog";
 import { Label } from "@/shadcn/components/ui/label";
 import { Input } from "@/shadcn/components/ui/input";
+import { Textarea } from "@/shadcn/components/ui/textarea";
 import { Button } from "@/shadcn/components/ui/button";
+import ProjectPic from "@/components/ProjectPic";
 import { useFirestore } from "@/hooks/useFirestore";
 import { toast, useToast } from "@/shadcn/components/ui/use-toast";
+import { NumericFormat } from "react-number-format";
 import Select from "react-select";
 import useClients from "@/hooks/useClients"; // Correto para importação padrão
 
@@ -27,6 +30,8 @@ export default function NewProject({
   const { addDocument: addProject } = useFirestore("projects");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [value, setValue] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [selectedClient, setSelectedClient] = useState(null);
   const { toast } = useToast();
   const clients = useClients(); // Usando o hook
@@ -39,12 +44,15 @@ export default function NewProject({
 
   const createProject = async (e) => {
     e.preventDefault();
-    if (!title || !description || !selectedClient) return;
+    if (!title || !description || !value || !imageUrl || !selectedClient)
+      return;
 
     try {
       const result = await addProject({
         title,
         description,
+        value,
+        imageUrl,
         clientId: selectedClient.value,
         deleted: false,
       });
@@ -57,11 +65,13 @@ export default function NewProject({
 
         setTitle("");
         setDescription("");
+        setValue("");
+        setImageUrl("");
         setSelectedClient(null);
         setOpen(false);
 
-        onProjectCreated(result.payload);
-        navigate("/some-path");
+        onProjectCreated(result.payload); // Notificar o ID do projeto recém-criado
+        navigate(`/some-path/${result.payload.id}`); // Navegação correta
       }
     } catch (error) {
       console.error("Erro ao criar o projeto:", error);
@@ -97,11 +107,27 @@ export default function NewProject({
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="description">Descrição do projeto</Label>
-              <Input
+              <Textarea
                 id="description"
-                className="col-span-3"
+                className="col-span-3 h-32 resize-none"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="value">Valor</Label>
+              <NumericFormat
+                id="value"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalSeparator=","
+                decimalScale={2}
+                allowNegative={false}
+                value={value}
+                onValueChange={({ value }) => setValue(value)}
+                customInput={Input}
+                className="col-span-3"
                 required
               />
             </div>
@@ -112,8 +138,22 @@ export default function NewProject({
                 options={clientOptions}
                 onChange={(selected) => setSelectedClient(selected)}
                 value={selectedClient}
+                className="col-span-3"
                 required
               />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label>Foto do projeto</Label>
+              <ProjectPic onImageUpload={setImageUrl}>
+                <Button type="button">Selecionar foto</Button>
+              </ProjectPic>
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Project"
+                  className="mt-2 h-32 w-32 object-cover rounded-lg"
+                />
+              )}
             </div>
           </div>
           <DialogFooter>

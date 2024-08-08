@@ -1,8 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
     function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == 'SEU_VALOR_SECRETO';
     }
     function isOwner() {
       return request.auth.uid == resource.data.ownerId || request.auth.uid == resource.data.userId;
@@ -13,36 +14,33 @@ service cloud.firestore {
     function isSignedIn() {
       return request.auth.uid != null;
     }
-    function isClient() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'client';
-    }
     function isAuthorizedClient(clientId) {
       return request.auth.uid == clientId;
     }
-    
+
     match /{document=**} {
-      allow read, write: if false; // Alterar isso para false para segurança padrão
+      allow read: if isSignedIn();  // Temporariamente permitir leituras para debugging
+      allow write: if false;
     }
-    
+
     match /users/{userId} {
       allow delete: if false;
       allow create: if isSignedIn() && idsMatch(userId);
       allow update: if
         isSignedIn() && idsMatch(userId)
-        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['email', 'id', 'role']);
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['email', 'id', 'admin']);
       allow read: if isSignedIn() && (idsMatch(userId) || isAdmin());
     }
 
     match /sharedCharts/{chartId} {
-      allow read: if isSignedIn() && isAuthorizedClient(resource.data.sharedWith);
+      allow read: if isSignedIn();
       allow write: if isSignedIn() && isOwner();
     }
-
-    match /expenses/{expenseId} {
-      allow read: if isSignedIn() && (isOwner() || isAdmin());
-      allow create: if isSignedIn() && !isClient(); // Permitir criação apenas se o usuário não for cliente
-      allow update: if isSignedIn() && (isOwner() || isAdmin());
-      allow delete: if isSignedIn() && (isOwner() || isAdmin());
+    
+    match /databases/{database}/documents {
+     match /clients/{clientId} {
+      allow read, write: if request.auth != null;
     }
+  }
   }
 }
