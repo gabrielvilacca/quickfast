@@ -16,10 +16,10 @@ import { Textarea } from "@/shadcn/components/ui/textarea";
 import { Button } from "@/shadcn/components/ui/button";
 import ProjectPic from "@/components/ProjectPic";
 import { useFirestore } from "@/hooks/useFirestore";
-import { toast, useToast } from "@/shadcn/components/ui/use-toast";
+import { useToast } from "@/shadcn/components/ui/use-toast";
 import { NumericFormat } from "react-number-format";
 import Select from "react-select";
-import useClients from "@/hooks/useClients"; // Correto para importação padrão
+import useClients from "@/hooks/useClients";
 
 export default function NewProject({
   children,
@@ -34,7 +34,7 @@ export default function NewProject({
   const [imageUrl, setImageUrl] = useState("");
   const [selectedClient, setSelectedClient] = useState(null);
   const { toast } = useToast();
-  const clients = useClients(); // Usando o hook
+  const clients = useClients();
   const navigate = useNavigate();
 
   const clientOptions = clients.map((client) => ({
@@ -44,8 +44,14 @@ export default function NewProject({
 
   const createProject = async (e) => {
     e.preventDefault();
-    if (!title || !description || !value || !imageUrl || !selectedClient)
+    if (!title || !description || !value || !imageUrl || !selectedClient) {
+      toast({
+        title: "Erro",
+        description: "Todos os campos são obrigatórios.",
+        status: "error",
+      });
       return;
+    }
 
     try {
       const result = await addProject({
@@ -63,6 +69,7 @@ export default function NewProject({
           description: `O projeto ${title} foi adicionado com sucesso!`,
         });
 
+        // Limpar o formulário após o sucesso
         setTitle("");
         setDescription("");
         setValue("");
@@ -70,8 +77,9 @@ export default function NewProject({
         setSelectedClient(null);
         setOpen(false);
 
-        onProjectCreated(result.payload); // Notificar o ID do projeto recém-criado
-        navigate(`/some-path/${result.payload.id}`); // Navegação correta
+        // Notificar a criação do projeto e navegar para a página correspondente
+        onProjectCreated(result.payload); // Considerando que result.payload contém o ID do projeto
+        navigate(`/projetos/${result.payload}`); // Navegação para a rota do projeto recém-criado
       }
     } catch (error) {
       console.error("Erro ao criar o projeto:", error);

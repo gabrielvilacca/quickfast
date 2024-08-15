@@ -18,11 +18,13 @@ service cloud.firestore {
       return request.auth.uid == clientId;
     }
 
+    // Regra geral para qualquer documento
     match /{document=**} {
-      allow read: if isSignedIn();  // Temporariamente permitir leituras para debugging
-      allow write: if false;
+      allow read: if isSignedIn();  // Permitir leitura para debugging
+      allow write: if false; // Bloquear escrita globalmente
     }
 
+    // Regras específicas para documentos na coleção 'users'
     match /users/{userId} {
       allow delete: if false;
       allow create: if isSignedIn() && idsMatch(userId);
@@ -32,15 +34,15 @@ service cloud.firestore {
       allow read: if isSignedIn() && (idsMatch(userId) || isAdmin());
     }
 
+    // Regras específicas para documentos na coleção 'sharedCharts'
     match /sharedCharts/{chartId} {
       allow read: if isSignedIn();
       allow write: if isSignedIn() && isOwner();
     }
-    
-    match /databases/{database}/documents {
-     match /clients/{clientId} {
+
+    // Regras específicas para documentos na coleção 'clients'
+    match /clients/{clientId} {
       allow read, write: if request.auth != null;
     }
-  }
   }
 }
