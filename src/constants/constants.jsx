@@ -19,7 +19,7 @@ export const routeOptions = [
   },
   {
     route: "/team",
-    name: "Equipe",
+    name: "Clientes",
     icon: <Users />,
   },
 ];

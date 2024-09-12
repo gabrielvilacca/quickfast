@@ -26,7 +26,11 @@ const ProjectPic = ({ onImageUpload }) => {
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload} disabled={progress > 0 && progress < 100}>
+      <button
+        onClick={handleUpload}
+        disabled={progress > 0 && progress < 100}
+        className=" bg-green-500 p-2 rounded-xl font-medium hover:bg-green-400"
+      >
         {progress > 0 && progress < 100 ? `Uploading ${progress}%` : "Upload"}
       </button>
       {error && <p>{error}</p>}

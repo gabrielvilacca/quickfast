@@ -20,6 +20,7 @@ import { useToast } from "@/shadcn/components/ui/use-toast";
 import { NumericFormat } from "react-number-format";
 import Select from "react-select";
 import useClients from "@/hooks/useClients";
+import ExportSheets from "@/components/ExportSheets";
 
 export default function NewProject({
   children,
@@ -33,6 +34,7 @@ export default function NewProject({
   const [value, setValue] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [selectedClient, setSelectedClient] = useState(null);
+  const [showExportSheets, setShowExportSheets] = useState(false); // Adicionando estado para abrir o diálogo
   const { toast } = useToast();
   const clients = useClients();
   const navigate = useNavigate();
@@ -95,12 +97,18 @@ export default function NewProject({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[800px] overflow-y-auto max-h-[80vh]">
-        <DialogHeader>
-          <DialogTitle>Adicionando Projeto</DialogTitle>
-          <DialogDescription>
-            Preencha as informações do seu projeto.
-          </DialogDescription>
-        </DialogHeader>
+        <div className="flex justify-between">
+          <DialogHeader>
+            <DialogTitle>Adicionando Projeto</DialogTitle>
+            <DialogDescription>
+              Preencha as informações do seu projeto.
+            </DialogDescription>
+          </DialogHeader>
+          <Button onClick={() => setShowExportSheets(true)}>
+            Exportar Planilhas
+          </Button>
+          <ExportSheets open={showExportSheets} setOpen={setShowExportSheets} />
+        </div>
         <form onSubmit={createProject}>
           <div className="grid gap-4 py-4">
             <div className="flex flex-col gap-1.5">

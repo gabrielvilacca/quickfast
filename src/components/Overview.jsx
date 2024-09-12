@@ -27,11 +27,11 @@ export default function Overview({ projectId }) {
     <div>
       {/* Resumo das informações */}
       <GraphsResum project={project} />
-      <div className="mt-5 md:flex gap-5 ">
+      <div className="mt-5 md:flex gap-32 ">
         <div className="md:w-[500px] ">
           <OverviewChart projectId={id} />
         </div>
-        <div className="mt-2 md:w-[600px] md:mt-0">
+        <div className="mt-2 md:w-[500px] md:mt-0">
           <OverviewList projectId={id} />
         </div>
       </div>

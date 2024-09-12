@@ -53,7 +53,7 @@ const TableExpense = ({ expenses, projectId }) => {
 
   return (
     <div className="expense-card">
-      <Card className="overflow-x-auto md:w-[500px]">
+      <Card className="overflow-x-auto md:w-[610px]">
         <ShadcnTable className="w-full">
           <TableCaption>Uma lista rápida das suas despesas</TableCaption>
           <TableHeader>

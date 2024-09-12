@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import bcrypt from "bcryptjs";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +14,7 @@ import { Label } from "@/shadcn/components/ui/label";
 import { Input } from "@/shadcn/components/ui/input";
 import { Button } from "@/shadcn/components/ui/button";
 import { useFirestore } from "@/hooks/useFirestore";
-import { toast, useToast } from "@/shadcn/components/ui/use-toast";
+import { useToast } from "@/shadcn/components/ui/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function NewClient({
@@ -35,11 +36,14 @@ export default function NewClient({
     if (!name || !email || !password) return;
 
     try {
-      // Adicionar cliente ao Firestore com as informações fornecidas
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(password, salt);
+
       const result = await addClient({
         name,
         email,
-        password, // Note que aqui estamos salvando a senha no Firestore. Certifique-se de que isso está de acordo com as práticas de segurança.
+        password: hashedPassword,
+        role: "client", // Adicionando um campo de role para definir o tipo de usuário
         deleted: false,
       });
 
@@ -53,9 +57,8 @@ export default function NewClient({
         setEmail("");
         setPassword("");
         setOpen(false);
-
         onClientCreated(result.payload);
-        navigate(`/client/${result.payload.id}`); // Navegação correta
+        navigate(`/client/${result.payload}`); // Navegação correta
       }
     } catch (error) {
       console.error("Erro ao criar o cliente:", error);
@@ -83,7 +86,6 @@ export default function NewClient({
               <Label htmlFor="name">Nome do cliente</Label>
               <Input
                 id="name"
-                className="col-span-3"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -93,7 +95,6 @@ export default function NewClient({
               <Label htmlFor="email">Email do cliente</Label>
               <Input
                 id="email"
-                className="col-span-3"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -108,7 +109,6 @@ export default function NewClient({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pr-10"
                 />
                 <Button
                   type="button"

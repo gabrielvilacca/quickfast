@@ -1,9 +1,9 @@
 rules_version = '2';
+// TODO: Definir as próprias regras de banco de dados
 service cloud.firestore {
   match /databases/{database}/documents {
-
     function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == 'SEU_VALOR_SECRETO';
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == 'SEU_VALOR_SECRETO'; // TODO: Altera
     }
     function isOwner() {
       return request.auth.uid == resource.data.ownerId || request.auth.uid == resource.data.userId;
@@ -14,35 +14,17 @@ service cloud.firestore {
     function isSignedIn() {
       return request.auth.uid != null;
     }
-    function isAuthorizedClient(clientId) {
-      return request.auth.uid == clientId;
-    }
-
-    // Regra geral para qualquer documento
     match /{document=**} {
-      allow read: if isSignedIn();  // Permitir leitura para debugging
-      allow write: if false; // Bloquear escrita globalmente
+      allow read, write: if true;
     }
-
-    // Regras específicas para documentos na coleção 'users'
     match /users/{userId} {
       allow delete: if false;
       allow create: if isSignedIn() && idsMatch(userId);
       allow update: if
         isSignedIn() && idsMatch(userId)
         && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['email', 'id', 'admin']);
-      allow read: if isSignedIn() && (idsMatch(userId) || isAdmin());
-    }
-
-    // Regras específicas para documentos na coleção 'sharedCharts'
-    match /sharedCharts/{chartId} {
-      allow read: if isSignedIn();
-      allow write: if isSignedIn() && isOwner();
-    }
-
-    // Regras específicas para documentos na coleção 'clients'
-    match /clients/{clientId} {
-      allow read, write: if request.auth != null;
+      allow read:
+        if isSignedIn() && (idsMatch(userId) || isAdmin() || teamsMatch());
     }
   }
 }

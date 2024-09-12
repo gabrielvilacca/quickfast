@@ -83,7 +83,7 @@ const OverviewChart = ({ projectId }) => {
   };
 
   return (
-    <Card className="w-full md:min-w-[500px]">
+    <Card className="w-full md:min-w-[610px]">
       <CardHeader>
         <CardTitle>Despesas Mensais</CardTitle>
         <CardDescription>Um resumo das despesas mensais</CardDescription>

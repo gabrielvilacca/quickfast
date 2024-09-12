@@ -42,7 +42,17 @@ const ProjectCard = ({ project }) => {
   }, [getSubDocuments, project.id]);
 
   const removeProject = async (projectId) => {
-    await deleteDocument(projectId);
+    try {
+      await deleteDocument(projectId);
+      console.log(`Projeto com ID ${projectId} foi excluído com sucesso.`);
+      // Atualizar a UI, removendo o projeto da lista ou notificando o componente pai
+      if (onProjectRemoved) {
+        onProjectRemoved(projectId); // callback opcional para o componente pai
+      }
+    } catch (error) {
+      console.error(`Erro ao excluir o projeto com ID ${projectId}:`, error);
+      // Aqui, você pode adicionar um toast ou uma notificação de erro para o usuário
+    }
   };
 
   return (

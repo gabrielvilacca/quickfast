@@ -6,6 +6,7 @@ const useClientLogin = () => {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
+  const [claims, setClaims] = useState(null); // Armazena os claims do usuário
 
   const auth = getAuth();
 
@@ -14,13 +15,16 @@ const useClientLogin = () => {
     setError(null);
 
     try {
-      // Autenticar o usuário com Firebase Authentication
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
       const userData = userCredential.user;
+
+      // Obtém os claims do token do usuário
+      const idTokenResult = await userData.getIdTokenResult();
+      setClaims(idTokenResult.claims); // Armazena os claims
 
       // Definir o usuário autenticado
       setUser({
@@ -35,7 +39,7 @@ const useClientLogin = () => {
     }
   };
 
-  return { login, isPending, error, user };
+  return { login, isPending, error, user, claims };
 };
 
 export default useClientLogin;

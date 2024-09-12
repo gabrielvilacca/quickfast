@@ -1,47 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/shadcn/components/ui/button";
 import { Input } from "@/shadcn/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import useClientLogin from "@/hooks/useClientLogin";
+import { useFirestore } from "@/hooks/useFirestore";
+import bcrypt from "bcryptjs";
 import { Eye, EyeOff } from "lucide-react";
-import { useProjects } from "@/hooks/useProjects";
 
 const LoginClient = () => {
-  const { login, isPending, error, user } = useClientLogin();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
-  const projects = useProjects(); // Obtendo a lista de projetos
+  const { getDocuments } = useFirestore("clients");
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    await login(email, password);
-  };
+    try {
+      const clients = await getDocuments();
+      console.log("Clientes:", clients);
 
-  useEffect(() => {
-    if (error) {
-      if (
-        error.includes("auth/wrong-password") ||
-        error.includes("auth/user-not-found")
-      ) {
-        setErrorMsg(
-          "As credenciais fornecidas estão incorretas. Por favor, tente novamente."
-        );
+      const client = clients.find((c) => c.email === email);
+      console.log("Cliente encontrado:", client);
+
+      if (client && bcrypt.compareSync(password, client.password)) {
+        console.log("Senha corresponde.");
+        if (client.role === "client") {
+          navigate(`/project/${client.id}`);
+        } else {
+          setErrorMsg("Você não tem permissão para acessar este sistema.");
+        }
       } else {
-        setErrorMsg("Ocorreu um erro ao tentar realizar o login.");
+        console.log("As credenciais fornecidas estão incorretas.");
+        setErrorMsg("As credenciais fornecidas estão incorretas.");
       }
+    } catch (error) {
+      console.error("Erro ao realizar login:", error);
+      setErrorMsg("Ocorreu um erro ao tentar realizar o login.");
     }
-
-    if (user && projects.length > 0) {
-      // Redirecionar para a página do primeiro projeto da lista
-      navigate(`/project/${projects[0].id}`);
-    } else if (user) {
-      // Se não houver projetos, redirecionar para uma página padrão
-      navigate("/projects");
-    }
-  }, [error, user, projects, navigate]);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -88,9 +85,7 @@ const LoginClient = () => {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Entrando..." : "Entrar"}
-          </Button>
+          <Button type="submit">Entrar</Button>
         </div>
         {errorMsg && <p className="text-red-500 mt-4">{errorMsg}</p>}
       </form>

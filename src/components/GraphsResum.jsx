@@ -65,8 +65,8 @@ export default function GraphsResum({ project }) {
   };
 
   return (
-    <div className="grid gap-4 grid-cols-1 sm:gap-64 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-fr">
-      <Card className="min-w-[250px]">
+    <div className=" grid gap-4 grid-cols-1 sm:gap-80 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-fr">
+      <Card className="min-w-[280px]">
         <CardHeader>
           <div className="flex justify-between">
             <CardDescription className="font-semibold text-md m-0">
@@ -82,7 +82,7 @@ export default function GraphsResum({ project }) {
         </CardHeader>
       </Card>
 
-      <Card className="min-w-[250px]">
+      <Card className="min-w-[280px]">
         <CardHeader>
           <div className="flex justify-between">
             <CardDescription className="font-semibold text-md m-0">
@@ -96,7 +96,7 @@ export default function GraphsResum({ project }) {
         </CardHeader>
       </Card>
 
-      <Card className="min-w-[250px]">
+      <Card className="min-w-[280px]">
         <CardHeader>
           <div className="flex justify-between">
             <CardDescription className="font-semibold text-md m-0">
@@ -110,7 +110,7 @@ export default function GraphsResum({ project }) {
         </CardHeader>
       </Card>
 
-      <Card className="min-w-[250px]">
+      <Card className="min-w-[280px]">
         <CardHeader>
           <div className="flex justify-between">
             <CardDescription className="font-semibold text-md m-0">
