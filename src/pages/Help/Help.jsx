@@ -18,7 +18,7 @@ export default function Help() {
         <div>
           <img src={Bug} alt="Bug" />
         </div>
-        <a href="https://wa.me/5537999286153">
+        <a href="">
           <Button className="w-64 h-16 text-2xl">Chamar suporte</Button>
         </a>
       </div>

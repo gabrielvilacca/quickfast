@@ -22,8 +22,8 @@ const corsOptions = {
       "http://127.0.0.1:5173",
       "http://localhost:5174",
       "https://127.0.0.1:5174",
-      "https://despesa-simples-9dd5c.web.app",
-      "https://app.despesasimples.com.br",
+      "https://quickfast-9dd5c.web.app", // url gerado pelo firebase
+      "https://app.quickfast.com.br", // a sua url .com, .com.br, etc..
     ];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);

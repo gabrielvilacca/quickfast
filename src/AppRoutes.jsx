@@ -16,14 +16,6 @@ import Help from "./pages/Help/Help";
 import { SubscriptionProvider } from "./contexts/SubscriptionContext";
 import ReactPixel from "react-facebook-pixel";
 import { hashString } from "./utils/hashString";
-import Expense from "./pages/Expenses/Expense";
-import ProjectList from "./pages/Home/ProjectList";
-import ProjectDetails from "./pages/Home/ProjectDetails";
-import Reports from "./pages/Reports/Reports";
-import Team from "./pages/Team/Team";
-import ClientDetails from "./pages/Team/ClientDetails";
-import LoginClient from "./pages/Team/LoginClient";
-import PrivateRoute from "./pages/Team/PrivateRoute";
 import ConditionalLayout from "./components/ConditionalLayout";
 
 function AppRoutes() {
@@ -75,27 +67,6 @@ function AppRoutes() {
                   />
                   <Route path="/help" element={<Help />} />
                   <Route path="*" element={<Home />} />
-                  <Route path="/expense" element={<Expense />} />
-                  <Route path="/project" element={<ProjectList />} />
-                  <Route
-                    path="/project/:id"
-                    element={
-                      <PrivateRoute>
-                        <ProjectDetails />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route path="/login-client" element={<LoginClient />} />
-                  <Route
-                    path="/client/:id"
-                    element={
-                      <PrivateRoute>
-                        <ClientDetails />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route path="/team" element={<Team />} />
-                  <Route path="/reports" element={<Reports />} />
                 </Routes>
               </ConditionalLayout>
             </SubscriptionProvider>
@@ -105,7 +76,6 @@ function AppRoutes() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/password/recovery" element={<PasswordRecovery />} />
-            <Route path="/login-client" element={<LoginClient />} />
             <Route path="*" element={<Signup />} />
           </Routes>
         )}

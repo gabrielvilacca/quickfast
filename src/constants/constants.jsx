@@ -13,13 +13,13 @@ export const routeOptions = [
     icon: <LayoutDashboard />,
   },
   {
-    route: "/reports",
-    name: "Relatórios",
+    route: "/opcao02",
+    name: "opção 1",
     icon: <Folder />,
   },
   {
-    route: "/team",
-    name: "Clientes",
+    route: "/opcao03",
+    name: "opção 2",
     icon: <Users />,
   },
 ];

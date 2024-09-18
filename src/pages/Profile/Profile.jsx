@@ -6,8 +6,7 @@ import { Card, CardContent } from "@/shadcn/components/ui/card";
 import { Button } from "@/shadcn/components/ui/button";
 
 // TODO: Trocar pela URL da sua Cloud Function
-const url =
-  "https://us-central1-despesa-simples-9dd5c.cloudfunctions.net/changePassword";
+const url = "https://us-central1-quickfast.cloudfunctions.net/changePassword";
 
 export default function Profile({ rerender, setRerender }) {
   const { user } = useAuthContext();

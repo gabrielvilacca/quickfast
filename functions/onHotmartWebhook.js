@@ -117,38 +117,29 @@ app.post("/", async (req, res) => {
 
         // Enviar e-mail com os dados de acesso
         const transporter = nodemailer.createTransport({
-          service: "gmail",
+          host: "smtp.hostinger.com",
+          port: 465,
+          secure: true,
           auth: {
-            user: "gabrielvilacca@gmail.com", // Seu e-mail do Gmail
-            pass: "m3rcedes4321", // Sua senha de aplicativo do Gmail
+            user: "equipe@testesvariados.shop",
+            pass: "Teste123!",
           },
         });
 
-        // Enviar e-mail com os dados de acesso
-        // const transporter = nodemailer.createTransport({
-        //   host: "smtp.hostinger.com",
-        //   port: 465,
-        //   secure: true,
-        //   auth: {
-        //     user: "equipe@testesvariados.shop",
-        //     pass: "Teste123!",
-        //   },
-        // });
-
         const mailOptions = {
-          from: "Gabriel | Despesa Simples <noreply@despesasimples.com>", // TODO: Alterar nome e e-mail
+          from: "Fulano <noreply@testesvariados.com>", // TODO: Alterar nome e e-mail
           to: getRecipient(webhook.data.buyer.email),
-          subject: "Acesse o Despesa Simples agora mesmo!", // TODO: Alterar o nome do app
+          subject: "Acesse o QuickFast agora mesmo!", // TODO: Alterar o nome do app
           html: `
           <div>
             <div style="text-align: center;">
-              <h2>Olá, ${webhook.data.buyer.name}, seja bem-vindo ao Despesa Simples!</h2>
+              <h2>Olá, ${webhook.data.buyer.name}, seja bem-vindo ao QuickFast!</h2>
             </div>
             <div style="text-align: left;">
               <p>Acesse imediatamente nossa plataforma, clicando no botão e informando os dados de acesso:</p>
               <p>E-mail: <b>${webhook.data.buyer.email}</b></p>
               <p>Senha: <b>${password}</b></p>
-              <a href="https://app.despesasimples.com" style="font-weight:bold;border-radius:6px;width:100%;text-align:center;display: inline-block; padding: 16px 0; color: white; background-color: #007bff; text-decoration: none;">Quero Acessar Agora</a>
+              <a href="https://app.seuapp.com" style="font-weight:bold;border-radius:6px;width:100%;text-align:center;display: inline-block; padding: 16px 0; color: white; background-color: #007bff; text-decoration: none;">Quero Acessar Agora</a>
             </div>
           </div>`, // TODO: Alterar dados no template de e-mail
         };
