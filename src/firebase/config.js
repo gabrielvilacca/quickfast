@@ -2,17 +2,9 @@ import { initializeApp } from "firebase/app";
 import { initializeFirestore, serverTimestamp } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+// import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 // TODO: Colocar o firebaseConfig do seu app aqui abaixo
-const firebaseConfig = {
-  apiKey: "AIzaSyApW1MC8AmfPJKlLVlcC7UIQ6DgLmiDo2c",
-  authDomain: "despesa-simples-9dd5c.firebaseapp.com",
-  projectId: "despesa-simples-9dd5c",
-  storageBucket: "despesa-simples-9dd5c.appspot.com",
-  messagingSenderId: "973196288735",
-  appId: "1:973196288735:web:4804ee9537eaed084abf6a",
-};
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);

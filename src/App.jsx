@@ -25,7 +25,7 @@ function App() {
 
     // Chamada API para enviar evento de PageView para seu próprio endpoint
     fetch(
-      " https://us-central1-despesa-simples-9dd5c.cloudfunctions.net/facebookCapi",
+      " https://us-central1-quickfast.cloudfunctions.net/facebookCapi",
       {
         // TODO: Substituir "URL_FACEBOOKCAPI" pela URL do seu endpoint
         method: "POST",

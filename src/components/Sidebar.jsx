@@ -28,7 +28,7 @@ export default function Sidebar({ rerender, setRerender }) {
   };
 
   return (
-    <nav className="relative overflow-y-auto min-h-[calc(100vh_-_64px)] hidden sm:flex sm:flex-col sm:justify-between h-full w-[250px] bg-[#07271f]  text-white">
+    <nav className="relative overflow-y-auto min-h-[calc(100vh_-_64px)] hidden sm:flex sm:flex-col sm:justify-between h-full w-[250px] bg-white text-black">
       {isPending && <Loading />}
       <div className="fixed h-[calc(100vh_-_96px)] w-[248px] sm:flex-grow sm:flex sm:flex-col sm:justify-between">
         <div>
@@ -70,7 +70,7 @@ export default function Sidebar({ rerender, setRerender }) {
                 className={`py-6 px-5 flex items-center gap-3 transition-all duration-300 rounded-md mt-1
                   hover:text-white ${
                     index === activeRoute
-                      ? "bg-[#1a3d32] font-medium text-xl"
+                      ? "bg-background font-medium text-xl"
                       : "text-xl font-medium text-neutral-400"
                   }`}
                 onClick={() => {
@@ -97,7 +97,7 @@ export default function Sidebar({ rerender, setRerender }) {
                 navigate("/help");
               }}
               className={`justify-start px-5 py-1 w-full transition-all duration-300 rounded-md
-                hover:bg-[#1a3d32] ${
+                hover:bg-foreground ${
                   activeRoute === 3.14
                     ? "bg-black font-medium"
                     : "text-neutral-400"

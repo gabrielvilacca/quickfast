@@ -1,8 +1,6 @@
 import {
   Folder,
   LayoutDashboard,
-  Receipt,
-  Settings,
   Users,
 } from "lucide-react";
 
